@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Loop & Fullscreen Assignment</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        #root {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .info {
+            margin-top: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const fruits = ["Apple", "Banana", "Cherry", "Dragonfruit", "Elderberry"];
+
+            // 1. Array Loop Logic
+            useEffect(() => {
+                console.log("--- Array Content (forEach) ---");
+                fruits.forEach((fruit, index) => {
+                    console.log(`Index ${index}: ${fruit}`);
+                });
+            }, []);
+
+            // 2. Fullscreen Logic
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch((err) => {
+                        alert(`Error attempting to enable fullscreen: ${err.message}`);
+                    });
+                } else {
+                    document.exitFullscreen();
+                }
+            };
+
+            return (
+    <div>
+        <h1>Assignment Tasks</h1>
+        <p>Check the <b>Console</b> (F12) to see the logs.</p>
+        
+        {/* This loops through the array and puts it on the screen */}
+        <ul style={{ textAlign: 'left', display: 'inline-block' }}>
+            {fruits.map((fruit, index) => (
+                <li key={index}>{fruit}</li>
+            ))}
+        </ul>
+        <br />
+
+        <button onClick={toggleFullscreen}>
+            Enable Fullscreen
+        </button>
+    </div>
+);
+
+            return (
+                <div>
+                    <h1>Assignment Tasks</h1>
+                    <p>Check the <b>Console</b> (F12) to see the array loop output.</p>
+                    
+                    <button onClick={toggleFullscreen}>
+                        Enable Fullscreen
+                    </button>
+
+                    <div className="info">
+                        <p>Technologies used: HTML, CSS, React, JS</p>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
