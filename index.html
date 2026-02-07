@@ -2,117 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Array Loop & Fullscreen Assignment</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+    <title>Mini Ludo - Debug Version</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
+        body { background: #222; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
+        #game-container { background: #fff; color: #333; padding: 20px; border-radius: 8px; text-align: center; }
+        
+        /* The Board Layout */
+        .board { 
+            display: grid; 
+            grid-template-columns: repeat(6, 60px); 
+            grid-template-rows: repeat(3, 60px); 
+            gap: 5px; 
+            background: #444; 
+            padding: 10px; 
+            margin: 20px auto;
         }
-        #root {
-            text-align: center;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .info {
-            margin-top: 20px;
-            color: #666;
-            font-style: italic;
+        
+        .cell { 
+            width: 60px; height: 60px; background: #eee; 
+            border: 1px solid #ccc; display: flex; 
+            align-items: center; justify-content: center; 
+            position: relative; font-weight: bold;
         }
 
+        .piece { 
+            width: 40px; height: 40px; border-radius: 50%; 
+            position: absolute; border: 3px solid white; z-index: 10;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         
+        #red-p { background: red; }
+        #blue-p { background: blue; top: 5px; left: 5px; }
+        
+        button { padding: 10px 20px; cursor: pointer; font-size: 16px; background: #27ae60; color: white; border: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="root"></div>
+<div id="game-container">
+    <h2>Ludo Movement Test</h2>
+    <p id="msg">Red's Turn. Roll the dice!</p>
+    
+    <div class="board" id="ludoBoard">
+        </div>
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
+    <button onclick="rollDice()">Roll Dice 🎲</button>
+    <button onclick="document.documentElement.requestFullscreen()">Fullscreen ⛶</button>
+</div>
 
-        function App() {
-            const fruits = ["Apple", "Banana", "Cherry", "Dragonfruit", "Elderberry"];
+<script>
+    // Configuration
+    const board = document.getElementById('ludoBoard');
+    const msg = document.getElementById('msg');
+    const totalCells = 18;
+    let redPos = 0;
+    let bluePos = 0;
+    let turn = 'red';
 
-            // 1. Array Loop Logic
-            useEffect(() => {
-                console.log("--- Array Content (forEach) ---");
-                fruits.forEach((fruit, index) => {
-                    console.log(`Index ${index}: ${fruit}`);
-                });
-            }, []);
-
-            // 2. Fullscreen Logic
-            const toggleFullscreen = () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch((err) => {
-                        alert(`Error attempting to enable fullscreen: ${err.message}`);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            };
-
-            return (
-    <div>
-        <h1>Assignment Tasks</h1>
-        <p>Check the <b>Console</b> (F12) to see the logs.</p>
-        
-        {/* This loops through the array and puts it on the screen */}
-        <ul style={{ textAlign: 'left', display: 'inline-block' }}>
-            {fruits.map((fruit, index) => (
-                <li key={index}>{fruit}</li>
-            ))}
-        </ul>
-        <br />
-
-        <button onClick={toggleFullscreen}>
-            Enable Fullscreen
-        </button>
-    </div>
-);
-
-            return (
-                <div>
-                    <h1>Assignment Tasks</h1>
-                    <p>Check the <b>Console</b> (F12) to see the array loop output.</p>
-                    
-                    <button onClick={toggleFullscreen}>
-                        Enable Fullscreen
-                    </button>
-
-                    <div className="info">
-                        <p>Technologies used: HTML, CSS, React, JS</p>
-                    </div>
-                </div>
-            );
+    // 1. Create the Board Cells
+    function createBoard() {
+        for (let i = 0; i < totalCells; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = 'c' + i;
+            cell.innerText = i;
+            board.appendChild(cell);
         }
+        updatePieces();
+    }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    // 2. Move Pieces on the DOM
+    function updatePieces() {
+        // Remove old pieces if they exist
+        const r = document.getElementById('red-p') || document.createElement('div');
+        r.id = 'red-p'; r.className = 'piece';
+        
+        const b = document.getElementById('blue-p') || document.createElement('div');
+        b.id = 'blue-p'; b.className = 'piece';
+
+        document.getElementById('c' + redPos).appendChild(r);
+        document.getElementById('c' + bluePos).appendChild(b);
+    }
+
+    // 3. Dice Logic
+    function rollDice() {
+        const roll = Math.floor(Math.random() * 6) + 1;
+        msg.innerText = (turn === 'red' ? "Red" : "Blue") + " rolled a " + roll;
+
+        setTimeout(() => {
+            if (turn === 'red') {
+                redPos = Math.min(redPos + roll, totalCells - 1);
+                turn = 'blue';
+            } else {
+                bluePos = Math.min(bluePos + roll, totalCells - 1);
+                turn = 'red';
+            }
+            updatePieces();
+            checkWin();
+        }, 500);
+    }
+
+    function checkWin() {
+        if (redPos === totalCells - 1) alert("Red Wins!");
+        if (bluePos === totalCells - 1) alert("Blue Wins!");
+    }
+
+    // Ensure the board loads only when HTML is ready
+    window.onload = createBoard;
+</script>
+
 </body>
 </html>
